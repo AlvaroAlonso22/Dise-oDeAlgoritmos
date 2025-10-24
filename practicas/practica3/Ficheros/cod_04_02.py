@@ -1,11 +1,10 @@
 class Parcial():
     
     def __init__(self, fich):
-        self.candidatos = []          # Lista de listas de habilidades de cada candidato
-        self.seleccionados = set()    # Índices de los candidatos seleccionados
-        self.universo = set()         # Todas las habilidades requeridas
+        self.candidatos = []
+        self.seleccionados = set()
+        self.universo = set()
         
-        # Leer archivo y poblar candidatos
         with open(fich) as f:
             for linea in f:
                 datos = list(map(int, linea.split(":")[1].strip().split()))
@@ -13,7 +12,7 @@ class Parcial():
                 self.universo.update(datos[1:])
         
     def __repr__(self):
-        return str([i for i in self.seleccionados])
+        return str(sorted([i for i in self.seleccionados]))
     
     def es_completa(self):
         cubiertas = set()
@@ -23,13 +22,69 @@ class Parcial():
     
     def coste(self):
         return len(self.seleccionados)
+    
+    def amplía(self):
+        cubiertas = set()
+        for i in self.seleccionados:
+            cubiertas.update(self.candidatos[i])
+        
+        for idx in range(len(self.candidatos)):
+            if idx not in self.seleccionados:
+                aporte = self.candidatos[idx] - cubiertas
+                if aporte:
+                    nueva = self._clonar()
+                    nueva.seleccionados.add(idx)
+                    yield nueva
+    
+    def _clonar(self):
+        nueva = Parcial.__new__(self.__class__)
+        nueva.candidatos = self.candidatos
+        nueva.universo = self.universo
+        nueva.seleccionados = self.seleccionados.copy()
+        return nueva
+
+
 
 class Parcial_ct(Parcial):
+    
     def cota(self):
-        return self.coste()
+        if self.es_completa():
+            return self.coste()
+        
+        cubiertas = set()
+        for i in self.seleccionados:
+            cubiertas.update(self.candidatos[i])
+        
+        faltantes = self.universo - cubiertas
+        
+        cota_adicional = 0
+        faltantes_temp = faltantes.copy()
+        candidatos_disponibles = [i for i in range(len(self.candidatos)) 
+                                  if i not in self.seleccionados]
+        
+        while faltantes_temp and candidatos_disponibles:
+            mejor_candidato = None
+            max_cobertura = 0
+            
+            for candidato in candidatos_disponibles:
+                cobertura = len(self.candidatos[candidato] & faltantes_temp)
+                if cobertura > max_cobertura:
+                    max_cobertura = cobertura
+                    mejor_candidato = candidato
+            
+            if mejor_candidato is None:
+                break
+            
+            cota_adicional += 1
+            faltantes_temp -= self.candidatos[mejor_candidato]
+            candidatos_disponibles.remove(mejor_candidato)
+        
+        return self.coste() + cota_adicional
+
 
 
 class Parcial_vrz(Parcial):
+    
     def amplía_voraz(self):
         cubiertas = set()
         for i in self.seleccionados:
@@ -40,11 +95,7 @@ class Parcial_vrz(Parcial):
             if idx in self.seleccionados:
                 continue
             aporte = len(habilidades - cubiertas)
-            if aporte > nuevas:                   # opción: para desempate, menor índice
+            if aporte > nuevas:
                 mejor, nuevas = idx, aporte
             elif aporte == nuevas and mejor is not None and idx < mejor:
                 mejor = idx
-        
-        if mejor is not None:
-            self.seleccionados.add(mejor)
-
