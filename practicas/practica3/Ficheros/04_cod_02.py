@@ -7,7 +7,7 @@
 # mediante una estrategia voraz.
 
 import importlib
-pcl = importlib.import_module('04_cod_07')
+pcl = importlib.import_module('cod_04_02')
 
 def voraz(fich):
     p = pcl.Parcial_vrz(fich)
