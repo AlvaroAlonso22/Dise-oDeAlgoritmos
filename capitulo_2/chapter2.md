@@ -181,6 +181,7 @@ What is the corresponding definition of `cdr`? (Hint: To verify that this
 works, make use of the substitution model of section 1.1.5)
 
 **Exercise 2.5:** Show that we can represent pairs of
+
 nonnegative integers using only numbers and arithmetic operations if we
 represent the pair `a` and `b` as the integer that is the product `2^a * 3^b`.
 Give the corresponding definitions of the procedures `cons`,
