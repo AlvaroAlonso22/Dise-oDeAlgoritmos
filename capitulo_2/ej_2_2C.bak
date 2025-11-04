@@ -1,0 +1,29 @@
+#lang racket
+(define (bob-box? x)
+  (eq? (type-tag x) 'bob-box))
+
+(define (alice-box? x)
+  (eq? (type-tag x) 'alice-box))
+
+;; Procedimientos genéricos width, height y area 
+(define (width box)
+  (cond
+    ((bob-box? box) (bob-width box))
+    ((alice-box? box) (alice-width box))))
+
+(define (height box)
+  (cond
+    ((bob-box? box) (bob-height box))
+    ((alice-box? box) (alice-height box))))
+
+(define (area box)
+  (cond
+    ((bob-box? box) (bob-area box))
+    ((alice-box? box) (alice-area box))))
+
+;; Ejemplo de prueba:
+;; (define b (bob-make-box 1 2 3 4))
+;; (define a (alice-make-box 1 2 3 4))
+;; (width b)  ; debe dar 3
+;; (height a) ; debe dar 2
+;; (area b)   ; debe dar 12
