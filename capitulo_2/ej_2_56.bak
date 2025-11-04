@@ -1,6 +1,7 @@
 #lang racket
 
 ;; Ejercicio 56, capítulo 2
+;; Show how to extend the basic differentiator to handle more kinds of expressions. For instance, implement the differentiation rule.
 
 ;; utilidades
 (define (=number? exp num)
@@ -50,30 +51,27 @@
 
 ;; derivada simbólica
 (define (deriv exp var)
-  (cond
-    [(number? exp) 0]
-    [(variable? exp)
-     (if (same-variable? exp var) 1 0)]
-    [(sum? exp)
-     (make-sum (deriv (addend exp) var)
-               (deriv (augend exp) var))]
-    [(product? exp)
-     (make-sum
-      (make-product (multiplier exp)
-                    (deriv (multiplicand exp) var))
-      (make-product (deriv (multiplier exp) var)
-                    (multiplicand exp)))]
-    [(exponentiation? exp)
-     (let ([u (base exp)]
-           [n (exponent exp)])
-       (cond
-         [(number? n)
-          (make-product
-           n
-           (make-product
-            (make-exponentiation u (make-sum n -1))
-            (deriv u var)))]
-         [else
-          (error "exponente no numérico en exponentiación" exp)]))]
-    [else
-     (error "Tipo de expresión no soportado" exp)]))
+  (cond [(number? exp) 0]
+        [(variable? exp)
+         (if (same-variable? exp var) 1 0)]
+        [(sum? exp)
+         (make-sum (deriv (addend exp) var)
+                   (deriv (augend exp) var))]
+        [(product? exp)
+         (make-sum
+          (make-product (multiplier exp)
+                        (deriv (multiplicand exp) var))
+          (make-product (deriv (multiplier exp) var)
+                        (multiplicand exp)))]
+        [(exponentiation? exp)
+         (let ([u (base exp)]
+               ([n (exponent exp)])
+           (cond [(number? n)
+                  (make-product
+                   n
+                   (make-product
+                    (make-exponentiation u (make-sum n -1))
+                    (deriv u var)))]
+                 [else
+                  (error "exponente no numérico en exponentiación" exp)]))]
+        [else (error "tipo de expresión desconocido: DERIV" exp)]))
