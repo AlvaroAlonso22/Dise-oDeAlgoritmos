@@ -18,7 +18,7 @@ def voraz(fich):
 if __name__ == '__main__':
     import sys
     fich = sys.argv[1] if len(sys.argv) > 1\
-           else '04_dat_01.txt'
+           else '04_dat_02.txt'
     aux = voraz(fich)
     print(aux)
     print(aux.coste())

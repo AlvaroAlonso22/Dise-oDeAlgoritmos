@@ -89,7 +89,6 @@ class Parcial_vrz(Parcial):
         cubiertas = set()
         for i in self.seleccionados:
             cubiertas.update(self.candidatos[i])
-        
         mejor, nuevas = None, -1
         for idx, habilidades in enumerate(self.candidatos):
             if idx in self.seleccionados:
@@ -99,3 +98,5 @@ class Parcial_vrz(Parcial):
                 mejor, nuevas = idx, aporte
             elif aporte == nuevas and mejor is not None and idx < mejor:
                 mejor = idx
+        if mejor is not None:
+            self.seleccionados.add(mejor)

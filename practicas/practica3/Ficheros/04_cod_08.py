@@ -20,7 +20,6 @@ def lanza(p, mj=None, t_mj=infinito):
         ct = p.cota()
         mejora = ct < t_mj
     else:
-        # Es innecesario calcular la cota.
         ct = '—'
         mejora = True
     escribe_línea(p, ct, t_mj, fondo, mejora)
